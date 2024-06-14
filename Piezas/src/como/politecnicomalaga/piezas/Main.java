@@ -80,30 +80,30 @@ public class Main {
 		return resultado;
 	}
 	
-	
-	
-	
 	public static void main(String args[]) {
-		
 		
 		Map <Integer, SparePart> misPiezas;
 		misPiezas = new HashMap<>();
-		
-		
 		
 		Scanner sc = new Scanner(System.in);
 		int resp=0;
 		boolean loop = true;
 		String ruta;
 		int codigoPieza;
+		boolean loopCrear = true;
+		
+		int atrCod;
+		String atrText;
+		double atrPrice;
 		
 		while(loop==true) {
 			System.out.println("Piezas mecánicas");	
 			System.out.println("--------------------");
-			System.out.println("1. Cargar un archivo json");
-			System.out.println("2. Mostrar pieza por pantalla");
-			System.out.println("3. Guardar pieza en json");
-			System.out.println("4. Salir");
+			System.out.println("1. Dar de alta una pieza");
+			System.out.println("2. Cargar un archivo json");
+			System.out.println("3. Mostrar pieza por pantalla");
+			System.out.println("4. Guardar pieza en json");
+			System.out.println("5. Salir");
 			
 			try {
 				resp=Integer.valueOf(sc.nextLine());
@@ -116,6 +116,76 @@ public class Main {
 			}
 			switch(resp) {
 			case 1:
+				System.out.println("Introduzca el tipo de pieza que desea dar de alta: \n"
+						+ "1. SparePart \n"
+						+ "2. Componente \n");
+				while(loopCrear==true) {
+					try {
+						resp=Integer.valueOf(sc.nextLine());
+					}catch(NumberFormatException n) {
+						System.out.println("Opción no válida");
+					}finally {
+						if(resp==1 || resp==2) {
+							loopCrear=false;
+						}else {
+							System.out.println("Opción no válida");
+						}
+					}
+					if(resp==1) {
+						System.out.println("Introduzca el código de la pieza");
+						try {
+							atrCod=Integer.valueOf(sc.nextLine());
+						}catch(NumberFormatException n) {
+							System.out.println("Código no válido");
+							break;
+						}
+						System.out.println("Introduzca la descripción de la SparePart");
+						atrText = sc.nextLine();
+						if(atrText.equals("")) {
+							System.out.println("No ha introducido ninguna descripción");
+							break;
+						}
+						System.out.println("Introduzca el precion de la SparePart");
+						try {
+							atrPrice=Double.valueOf(sc.nextLine());
+						}catch(NumberFormatException n) {
+							System.out.println("Precio no válido");
+							break;
+						}
+						SparePart nuevaSpare = new SparePart(atrCod, atrText, atrPrice);
+						misPiezas.put(nuevaSpare.getCode(), nuevaSpare);
+						System.out.println("SparePart dada de alta correctamente");
+						
+					}
+					else {
+						System.out.println("Introduzca el código del componente");
+						try {
+							atrCod=Integer.valueOf(sc.nextLine());
+						}catch(NumberFormatException n) {
+							System.out.println("Código no válido");
+							break;
+						}
+						System.out.println("Introduzca la descripción del componente");
+						atrText = sc.nextLine();
+						if(atrText.equals("")) {
+							System.out.println("No ha introducido ninguna descripción");
+							break;
+						}
+						System.out.println("Introduzca el precion del componente");
+						try {
+							atrPrice=Double.valueOf(sc.nextLine());
+						}catch(NumberFormatException n) {
+							System.out.println("Precio no válido");
+							break;
+						}
+						Component nuevoComp = new Component(atrCod, atrText, atrPrice);
+						misPiezas.put(nuevoComp.getCode(), nuevoComp);
+						System.out.println("SparePart dada de alta correctamente");
+					}
+				}
+				loopCrear=true;
+				break;
+			case 2:
 				System.out.println("Introduzca que tipo de pieza va a cargar:");
 				System.out.println("1. Componente");
 				System.out.println("2. Pieza suelta");
@@ -164,7 +234,7 @@ public class Main {
 					}
 				}
 				break;
-			case 2:
+			case 3:
 				System.out.println("Introduzca el código de la pieza a mostrar");
 				try {
 					codigoPieza = Integer.valueOf(sc.nextLine());
@@ -181,7 +251,7 @@ public class Main {
                 break;
 				
 				
-			case 3:
+			case 4:
 				System.out.println("Introduzca el código de la pieza a guardar:");
                 try {
                     codigoPieza = Integer.valueOf(sc.nextLine());
@@ -202,7 +272,7 @@ public class Main {
                     System.out.println("No existe ninguna pieza con ese código.");
                 }
                 break;
-			case 4:
+			case 5:
 				System.out.println("Adios");
 				loop=false;
 			}
