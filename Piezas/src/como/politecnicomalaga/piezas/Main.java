@@ -212,6 +212,7 @@ public class Main {
 						Component compAgregado = gson.fromJson(leerComponente, Component.class);
 						if(compAgregado!=null) {
 							misPiezas.put(compAgregado.getCode(), compAgregado);
+							compAgregado.agregarSparesMain(misPiezas);
 							System.out.println("Componente agregado correctamente");
 						}
 					}else {
@@ -275,6 +276,18 @@ public class Main {
 			case 5:
 				System.out.println("Adios");
 				loop=false;
+				
+			case 6:
+				System.out.println("Meter comp");
+				atrCod = Integer.valueOf(sc.nextLine());
+				
+				if(misPiezas.containsKey(atrCod)) {
+					System.out.println("Meter cod spare");
+					int atrPru = Integer.valueOf(sc.nextLine());
+					
+					
+				}
+				
 			}
 			
 			
