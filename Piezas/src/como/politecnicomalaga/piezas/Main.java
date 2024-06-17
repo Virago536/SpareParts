@@ -91,8 +91,12 @@ public class Main {
 		String ruta;
 		int codigoPieza;
 		boolean loopCrear = true;
+		String sn;
 		
-		int atrCod;
+		boolean loopSN = true;
+		int buscaCod = 0;
+		
+		int atrCod = 0;
 		String atrText;
 		double atrPrice;
 		
@@ -100,17 +104,18 @@ public class Main {
 			System.out.println("Piezas mecánicas");	
 			System.out.println("--------------------");
 			System.out.println("1. Dar de alta una pieza");
-			System.out.println("2. Cargar un archivo json");
-			System.out.println("3. Mostrar pieza por pantalla");
-			System.out.println("4. Guardar pieza en json");
-			System.out.println("5. Salir");
+			System.out.println("2. Agregar una spare a un componente");			
+			System.out.println("3. Cargar un archivo json");
+			System.out.println("4. Mostrar pieza por pantalla");
+			System.out.println("5. Guardar pieza en json");
+			System.out.println("6. Salir");
 			
 			try {
 				resp=Integer.valueOf(sc.nextLine());
 			}catch(NumberFormatException n) {
 				System.out.println("Opción no válida");
 			}finally {
-				if(resp<1 || resp>4) {
+				if(resp<1 || resp>6) {
 					System.out.println("Opción no válida");
 				}
 			}
@@ -145,13 +150,14 @@ public class Main {
 							System.out.println("No ha introducido ninguna descripción");
 							break;
 						}
-						System.out.println("Introduzca el precion de la SparePart");
+						System.out.println("Introduzca el precio de la SparePart");
 						try {
 							atrPrice=Double.valueOf(sc.nextLine());
 						}catch(NumberFormatException n) {
 							System.out.println("Precio no válido");
 							break;
-						}
+						}						
+						
 						SparePart nuevaSpare = new SparePart(atrCod, atrText, atrPrice);
 						misPiezas.put(nuevaSpare.getCode(), nuevaSpare);
 						System.out.println("SparePart dada de alta correctamente");
@@ -171,7 +177,7 @@ public class Main {
 							System.out.println("No ha introducido ninguna descripción");
 							break;
 						}
-						System.out.println("Introduzca el precion del componente");
+						System.out.println("Introduzca el precio del componente");
 						try {
 							atrPrice=Double.valueOf(sc.nextLine());
 						}catch(NumberFormatException n) {
@@ -179,13 +185,104 @@ public class Main {
 							break;
 						}
 						Component nuevoComp = new Component(atrCod, atrText, atrPrice);
-						misPiezas.put(nuevoComp.getCode(), nuevoComp);
-						System.out.println("SparePart dada de alta correctamente");
+						System.out.println("¿Quiere agregar piezas al componente (si, no)?");
+						sn=sc.nextLine();
+						loopSN = true;
+						
+						while(loopSN==true) {
+							if(sn.equals("si")) {
+								if(misPiezas.isEmpty()) {
+									System.out.println("No hay piezas en el mapa de piezas");
+									misPiezas.put(nuevoComp.getCode(), nuevoComp);
+									loopSN = false;
+								}else {
+									System.out.println("Introduzca el código de la pieza a incluir");
+									try {
+										buscaCod = Integer.valueOf(sc.nextLine());
+									}catch(NumberFormatException n) {
+										System.out.println("Código no válido");
+									}finally {
+										if(!misPiezas.containsKey(buscaCod)) {
+											System.out.println("No existe ninguna pieza con ese código");
+											sn="si";
+										}else {
+											SparePart laSpare = misPiezas.get(buscaCod);
+											if(nuevoComp.agregarSparePart(laSpare)) {
+												System.out.println("pieza agregada correctamente");
+												/*if(nuevoComp.buscarSparePart(laSpare.getCode())!=null) {
+													System.out.println("la spare está");
+												}else {
+													System.out.println("la spare no está");
+												}*/
+												
+											}
+											
+											System.out.println("¿Quiere seguir agregando piezas? Diferencia entre "
+													+ "\n (Introduzca si para seguir y cualquier otra cosa para salir)");
+											sn = sc.nextLine();
+											if(sn.compareTo("si")!=0) {
+												misPiezas.put(nuevoComp.getCode(), nuevoComp);
+												loopSN = false;
+											}
+											
+										}
+										
+									}
+								}
+							}else if(sn.equals("no")) {
+								misPiezas.put(nuevoComp.getCode(), nuevoComp);
+								System.out.println("Component dado de alta correctamente");
+								loopSN = false;
+							}else {
+								System.out.println("Opción no válida");
+							}
+							
+						}
+						
+						
+						
 					}
 				}
 				loopCrear=true;
 				break;
 			case 2:
+				System.out.println("Introduzca el código del componente para agregarle piezas");
+				try {
+					atrCod = Integer.valueOf(sc.nextLine());
+				}catch(NumberFormatException n) {
+					System.out.println("Código no válido");
+				}finally {
+					if(!misPiezas.containsKey(atrCod)) {
+						System.out.println("No existe un componente con ese código");
+					}else {
+						SparePart unaSpare = misPiezas.get(atrCod);
+						if( unaSpare instanceof Component) {
+							Component unComp = (Component) unaSpare;
+							System.out.println("Introduzca el código de la spare a agregar");
+							try {
+								buscaCod = Integer.valueOf(sc.nextLine());
+							}catch(NumberFormatException n) {
+								System.out.println("Código no válido");
+							}finally {
+								if(!misPiezas.containsKey(buscaCod)) {
+									System.out.println("No existe ninguna pieza con ese código");
+								}else {
+									SparePart spareAgreg = misPiezas.get(buscaCod);
+									unComp.agregarSparePart(spareAgreg);
+									if(unComp.buscarSparePart(buscaCod)!=null) {
+										System.out.println("Se agregó la spare");
+									}else {
+										System.out.println("No se agregó la spare");
+									}
+								}
+							}
+						}else {
+							System.out.println("No existe un componente con ese código");
+						}
+					}
+				}
+				break;
+			case 3:
 				System.out.println("Introduzca que tipo de pieza va a cargar:");
 				System.out.println("1. Componente");
 				System.out.println("2. Pieza suelta");
@@ -235,7 +332,7 @@ public class Main {
 					}
 				}
 				break;
-			case 3:
+			case 4:
 				System.out.println("Introduzca el código de la pieza a mostrar");
 				try {
 					codigoPieza = Integer.valueOf(sc.nextLine());
@@ -244,15 +341,22 @@ public class Main {
 					break;
 				}
 				SparePart pieza = misPiezas.get(codigoPieza);
+				
                 if (pieza != null) {
-                    System.out.println("Pieza: " + pieza);
+                	if(pieza instanceof Component) {
+    					Component c = (Component) pieza;
+    					 System.out.println("Pieza: " + c);
+    					
+    					
+    				}else
+    					System.out.println("Pieza: " + pieza);
                 } else {
                     System.out.println("No existe ninguna pieza con ese código.");
                 }
                 break;
 				
 				
-			case 4:
+			case 5:
 				System.out.println("Introduzca el código de la pieza a guardar:");
                 try {
                     codigoPieza = Integer.valueOf(sc.nextLine());
@@ -273,22 +377,31 @@ public class Main {
                     System.out.println("No existe ninguna pieza con ese código.");
                 }
                 break;
-			case 5:
+			case 6:
 				System.out.println("Adios");
 				loop=false;
+				break;
 				
-			case 6:
-				System.out.println("Meter comp");
-				atrCod = Integer.valueOf(sc.nextLine());
-				
-				if(misPiezas.containsKey(atrCod)) {
-					System.out.println("Meter cod spare");
-					int atrPru = Integer.valueOf(sc.nextLine());
-					
-					
+			case 7:
+				System.out.println("meter cod comp");
+				int buscCod = Integer.valueOf(sc.nextLine());
+				SparePart part = misPiezas.get(buscCod);
+				if(part instanceof Component) {
+					Component componente = (Component) part;
+					System.out.println("meter cod spare");
+					int codSpar = Integer.valueOf(sc.nextLine());
+					if(componente.buscarSparePart(codSpar)!=null) {
+						System.out.println("la spare está");
+					}else {
+						System.out.println("La spare no está");
+					}
 				}
 				
+				
+				
+				break;
 			}
+			
 			
 			
 		}
