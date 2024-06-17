@@ -5,21 +5,25 @@ import java.util.Map;
 
 public class Component extends SparePart{
 	
-	Map <Integer,SparePart> spareParts;
+	private Map <Integer,SparePart> spareParts;
 	
 	public Component(int code, String text, double price) {
 		super(code, text, price);
 		this.spareParts = new HashMap<>();
 	}
 
-    public Map<Integer, SparePart> getSpareParts() {
+    private Map<Integer, SparePart> getSpareParts() {
         return spareParts;
     }
     
     //añadir sparepart al mapa
-    public boolean agregarSpareParts(SparePart nuevaSpare) {
+    public boolean agregarSparePart(SparePart nuevaSpare) {
     	spareParts.put(nuevaSpare.getCode(), nuevaSpare);
-    	return false;
+    	if(spareParts.containsValue(nuevaSpare)) {
+    		return true;
+    	}else {
+    		return false;
+    	}
     }
     
     public void agregarSparesMain(Map<Integer, SparePart> sparePartes) {
@@ -33,6 +37,7 @@ public class Component extends SparePart{
     public SparePart buscarSparePart(int code) {
     	if(spareParts.containsKey(code)) {
     		SparePart una = spareParts.get(code);
+    		return una;
     	}
     	return null;
     }
@@ -48,9 +53,25 @@ public class Component extends SparePart{
     }
     
     
+
 	@Override
 	public String toString() {
-		return "Component [code=" + code + ", text=" + text + ", price=" + price + ", spareParts=" + spareParts +"]";
+		String resultado = "Component [code=" + code + ", text=" + text + ", price=" + price + ", spareParts=";
+		
+		
+		String mapaString="";
+		
+		for(SparePart spareMeter : spareParts.values()) {
+			mapaString += spareMeter.toString();
+		}
+		return resultado + mapaString+"]";
 	}
+
+    
+	
+	
+	
+	
 	
 }
+
